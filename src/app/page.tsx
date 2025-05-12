@@ -35,7 +35,7 @@ export default function StudentHubPage() {
         </Tabs>
       </main>
       <footer className="text-center py-4 border-t text-muted-foreground text-sm">
-        © {new Date().getFullYear()} Student Hub. All rights reserved.
+        © {new Date().getFullYear()} EduX. All rights reserved.
       </footer>
     </div>
   );
