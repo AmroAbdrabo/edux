@@ -1,4 +1,3 @@
-
 import type { Metadata } from 'next';
 import LoginForm from '@/components/auth/LoginForm';
 import { GraduationCap } from 'lucide-react';
