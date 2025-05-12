@@ -11,7 +11,8 @@ import CourseCard from './CourseCard';
 import RegistrationCart from './RegistrationCart';
 import ContactInformation from './ContactInfo';
 import CourseScheduleCalendar from './CourseScheduleCalendar'; // Added import
-import { Search, Filter, XCircle, CalendarClock, ChevronDown, ChevronUp } from 'lucide-react'; // Added CalendarClock, ChevronDown, ChevronUp
+// Added Download icon to the import
+import { Search, Filter, XCircle, CalendarClock, ChevronDown, ChevronUp, Download } from 'lucide-react';
 
 const departments = [...new Set(mockCourses.map(course => course.department))].filter(Boolean);
 const semesters = [...new Set(mockCourses.map(course => course.semester))].filter(Boolean);
@@ -27,8 +28,7 @@ export default function CourseSearchTab() {
     courseCode: '',
   });
   const [selectedCourses, setSelectedCourses] = useState<Course[]>([]);
-  // --- Added State for Collapsible Course List ---
-  const [isCourseListOpen, setIsCourseListOpen] = useState(true); // Default to open
+  const [isCourseListOpen, setIsCourseListOpen] = useState(true);
 
   const filteredCourses = useMemo(() => {
     return mockCourses.filter(course => {
@@ -73,24 +73,37 @@ export default function CourseSearchTab() {
   }, []);
 
   const handleRegister = useCallback(() => {
+    // In a real application, you would send selectedCourses to your backend API
     console.log("Registering courses:", selectedCourses);
+    alert(`Simulating registration for ${selectedCourses.length} courses.`);
+    // Optionally clear cart after registration: setSelectedCourses([]);
   }, [selectedCourses]);
 
-  // --- Added Toggle Function ---
   const toggleCourseList = useCallback(() => {
     setIsCourseListOpen(prev => !prev);
   }, []);
+
+  // --- Function to handle PDF Download ---
+  // You might not need a separate function if using a simple <a> tag,
+  // but it's here if you need more complex logic later (e.g., fetching PDF dynamically)
+  const handleDownloadPdf = () => {
+    // This function is technically not needed if using the <a> tag approach below,
+    // but kept for potential future logic expansion.
+    console.log('Initiating PDF download...');
+    // The actual download is handled by the <a> tag's href and download attributes.
+  };
 
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 p-4 md:p-6">
       <div className="lg:col-span-2 space-y-6">
 
-
         {/* Search and Filters */}
         <div className="bg-card p-6 rounded-lg shadow-md">
           <h2 className="text-2xl font-semibold mb-4 text-primary flex items-center"><Search className="mr-2" /> Course Search</h2>
+          {/* --- Grid layout for filter controls --- */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+            {/* --- Filter Inputs and Selects --- */}
             <Input
               placeholder="Search by keyword (name, description)..."
               value={searchTerm}
@@ -129,26 +142,42 @@ export default function CourseSearchTab() {
                 {semesters.map(sem => <SelectItem key={sem} value={sem}>{sem}</SelectItem>)}
               </SelectContent>
             </Select>
+            {/* --- Clear Filters Button (spans 1 column on medium screens) --- */}
             <Button onClick={clearFilters} variant="outline" className="md:col-span-1 flex items-center justify-center text-base">
               <XCircle className="mr-2 h-4 w-4" /> Clear Filters
             </Button>
+
+            {/* --- Wide Blue Download PDF Button (spans 2 columns on medium screens) --- */}
+            {/* IMPORTANT: Replace '/path/to/your-course-catalog.pdf' with the actual URL or path to your PDF file */}
+            <a
+              href="/docs/micro_msc_sp.pdf" // <<-- UPDATE THIS PATH
+              download="study_plan.pdf" // Optional: Suggests a filename to the browser
+              className="md:col-span-2" // Make the link span 2 columns on medium+ screens
+              onClick={handleDownloadPdf} // Optional: Use if you need JS logic before/during download
+            >
+              <Button
+                variant="default" // Use the default variant (usually primary/blue in shadcn/ui)
+                className="w-full flex items-center justify-center text-base" // Make button fill the link's width
+              >
+                <Download className="mr-2 h-4 w-4" />
+                Download Study Plan (PDF)
+              </Button>
+            </a>
+            {/* --- End Download Button --- */}
           </div>
         </div>
 
-        {/* Course List - Modified for Collapsible */}
+        {/* Course List - Collapsible */}
         <div className="bg-card p-6 rounded-lg shadow-md">
-           {/* --- Modified Header: Added onClick, cursor-pointer, justify-between, and chevron icon --- */}
            <h2
             className="text-2xl font-semibold mb-4 text-primary flex items-center justify-between cursor-pointer"
             onClick={toggleCourseList}
            >
-             <div className="flex items-center"> {/* Group icon and text */}
+             <div className="flex items-center">
                <Filter className="mr-2" /> Available Courses ({filteredCourses.length})
              </div>
-             {/* --- Conditional Chevron Icon --- */}
              {isCourseListOpen ? <ChevronUp className="h-6 w-6 text-muted-foreground" /> : <ChevronDown className="h-6 w-6 text-muted-foreground" />}
            </h2>
-           {/* --- Conditionally render the ScrollArea --- */}
            {isCourseListOpen && (
              <ScrollArea className="h-[600px] pr-3">
                {filteredCourses.length > 0 ? (
@@ -167,11 +196,11 @@ export default function CourseSearchTab() {
            )}
         </div>
 
-      {/* Course Schedule Calendar */}
-      <CourseScheduleCalendar courses={selectedCourses} />
+        {/* Course Schedule Calendar */}
+        <CourseScheduleCalendar courses={selectedCourses} />
       </div>
 
-      {/* Registration Cart */}
+      {/* Right Sidebar: Registration Cart & Contact Info */}
       <div className="lg:col-span-1 space-y-6">
         <RegistrationCart
           selectedCourses={selectedCourses}
@@ -179,7 +208,6 @@ export default function CourseSearchTab() {
           creditSummary={creditSummary}
           onRegister={handleRegister}
         />
-         {/* Insert component containing contact information containing email, phone number, office, and hours here */}
          <ContactInformation
           email="hecmaster@unil.ch"
           phone="+41 21 123 45 67"

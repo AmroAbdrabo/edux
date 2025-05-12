@@ -8,7 +8,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Search, ListChecks, UserCog } from 'lucide-react';
 
 export const metadata: Metadata = {
-  title: 'Dashboard - Student Hub',
+  title: 'Dashboard - UNIL EduX',
   description: 'Manage your courses, transcript, and profile.',
 };
 
@@ -42,7 +42,7 @@ export default function StudentHubDashboardPage() {
         </Tabs>
       </main>
       <footer className="text-center py-4 border-t text-muted-foreground text-sm">
-        © {new Date().getFullYear()} Student Hub. All rights reserved.
+        © {new Date().getFullYear()} Eva Luvison, Frank Ressat, Amro Abdrabo, Thomas Anthoine Milhomme. All rights reserved.
       </footer>
     </div>
   );
