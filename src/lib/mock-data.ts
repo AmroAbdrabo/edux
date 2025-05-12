@@ -1,0 +1,138 @@
+import type { Course, StudentProfile, TranscriptItem, EnrolledCourse } from './types';
+
+export const mockCourses: Course[] = [
+  {
+    id: 'crs101',
+    code: 'CS101',
+    name: 'Introduction to Computer Science',
+    description: 'A foundational course covering basic concepts of programming and computer science.',
+    credits: 3,
+    instructor: 'Dr. Ada Lovelace',
+    department: 'Computer Science',
+    semester: 'Fall 2024',
+    schedule: 'Mon, Wed 9:00 AM - 10:15 AM',
+    deadline: new Date(2024, 7, 15).toISOString(), // Aug 15, 2024
+    type: 'major',
+  },
+  {
+    id: 'crs102',
+    code: 'MA201',
+    name: 'Calculus I',
+    description: 'Introduction to differential calculus.',
+    credits: 4,
+    instructor: 'Dr. Isaac Newton',
+    department: 'Mathematics',
+    semester: 'Fall 2024',
+    schedule: 'Tue, Thu 1:00 PM - 2:50 PM',
+    deadline: new Date(2024, 7, 15).toISOString(),
+    type: 'major',
+  },
+  {
+    id: 'crs103',
+    code: 'ENG101',
+    name: 'English Composition',
+    description: 'Developing effective writing skills.',
+    credits: 3,
+    instructor: 'Dr. Jane Austen',
+    department: 'English',
+    semester: 'Fall 2024',
+    schedule: 'Mon, Wed, Fri 11:00 AM - 11:50 AM',
+    deadline: new Date(2024, 7, 15).toISOString(),
+    type: 'elective',
+  },
+  {
+    id: 'crs104',
+    code: 'PHY201',
+    name: 'University Physics I',
+    description: 'Mechanics, heat, and sound.',
+    credits: 4,
+    instructor: 'Dr. Albert Einstein',
+    department: 'Physics',
+    semester: 'Spring 2025',
+    schedule: 'Tue, Thu 10:00 AM - 11:50 AM',
+    deadline: new Date(2024, 11, 15).toISOString(), // Dec 15, 2024
+    type: 'major',
+  },
+  {
+    id: 'crs105',
+    code: 'ART100',
+    name: 'Introduction to Art History',
+    description: 'Survey of major art movements and styles.',
+    credits: 3,
+    instructor: 'Dr. Leonardo da Vinci',
+    department: 'Art History',
+    semester: 'Fall 2024',
+    schedule: 'Fri 2:00 PM - 4:50 PM',
+    deadline: new Date(2024, 7, 15).toISOString(),
+    type: 'minor',
+  },
+  {
+    id: 'crs106',
+    code: 'PSY101',
+    name: 'Introduction to Psychology',
+    description: 'Basic principles of psychology.',
+    credits: 3,
+    instructor: 'Dr. Sigmund Freud',
+    department: 'Psychology',
+    semester: 'Spring 2025',
+    schedule: 'Mon, Wed 1:00 PM - 2:15 PM',
+    deadline: new Date(2024, 11, 15).toISOString(),
+    type: 'elective',
+  },
+];
+
+export const mockStudentProfile: StudentProfile = {
+  id: 'stud123',
+  name: 'John Doe',
+  studentId: 'S12345678',
+  email: 'john.doe@example.com',
+  phone: '555-123-4567',
+  address: '123 College Ave, Anytown, USA',
+  secondaryEmail: 'john.personal@example.com',
+};
+
+export const mockTranscript: TranscriptItem[] = [
+  {
+    id: 'trn001',
+    courseCode: 'CS099',
+    courseName: 'Intro to Programming Logic',
+    semesterTaken: 'Spring 2023',
+    grade: 'A',
+    creditsEarned: 3,
+  },
+  {
+    id: 'trn002',
+    courseCode: 'MA100',
+    courseName: 'College Algebra',
+    semesterTaken: 'Spring 2023',
+    grade: 'B+',
+    creditsEarned: 3,
+  },
+  {
+    id: 'trn003',
+    courseCode: 'ENG050',
+    courseName: 'Foundations of Writing',
+    semesterTaken: 'Fall 2023',
+    grade: 'A-',
+    creditsEarned: 3,
+  },
+];
+
+export const mockEnrollment: EnrolledCourse[] = [
+  {
+    id: 'enr001',
+    courseCode: 'CS101',
+    courseName: 'Introduction to Computer Science',
+    credits: 3,
+    schedule: 'Mon, Wed 9:00 AM - 10:15 AM',
+    instructor: 'Dr. Ada Lovelace',
+  },
+  {
+    id: 'enr002',
+    courseCode: 'MA201',
+    courseName: 'Calculus I',
+    credits: 4,
+    schedule: 'Tue, Thu 1:00 PM - 2:50 PM',
+    instructor: 'Dr. Isaac Newton',
+  },
+];
