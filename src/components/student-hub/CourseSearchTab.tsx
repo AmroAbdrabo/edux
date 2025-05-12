@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useMemo, useCallback } from 'react';
@@ -13,6 +14,8 @@ import { Search, Filter, XCircle } from 'lucide-react';
 
 const departments = [...new Set(mockCourses.map(course => course.department))];
 const semesters = [...new Set(mockCourses.map(course => course.semester))];
+
+const ALL_OPTIONS_VALUE = "__ALL__"; // Unique value for "All" options to avoid empty string in SelectItem
 
 export default function CourseSearchTab() {
   const [searchTerm, setSearchTerm] = useState('');
@@ -99,17 +102,23 @@ export default function CourseSearchTab() {
               onChange={(e) => handleFilterChange('instructor', e.target.value)}
               className="text-base"
             />
-            <Select value={filters.department} onValueChange={(value) => handleFilterChange('department', value)}>
+            <Select 
+              value={filters.department} 
+              onValueChange={(value) => handleFilterChange('department', value === ALL_OPTIONS_VALUE ? '' : value)}
+            >
               <SelectTrigger className="text-base"><SelectValue placeholder="Filter by Department" /></SelectTrigger>
               <SelectContent>
-                <SelectItem value="">All Departments</SelectItem>
+                <SelectItem value={ALL_OPTIONS_VALUE}>All Departments</SelectItem>
                 {departments.map(dept => <SelectItem key={dept} value={dept}>{dept}</SelectItem>)}
               </SelectContent>
             </Select>
-            <Select value={filters.semester} onValueChange={(value) => handleFilterChange('semester', value)}>
+            <Select 
+              value={filters.semester} 
+              onValueChange={(value) => handleFilterChange('semester', value === ALL_OPTIONS_VALUE ? '' : value)}
+            >
               <SelectTrigger className="text-base"><SelectValue placeholder="Filter by Semester" /></SelectTrigger>
               <SelectContent>
-                <SelectItem value="">All Semesters</SelectItem>
+                <SelectItem value={ALL_OPTIONS_VALUE}>All Semesters</SelectItem>
                 {semesters.map(sem => <SelectItem key={sem} value={sem}>{sem}</SelectItem>)}
               </SelectContent>
             </Select>
@@ -151,3 +160,4 @@ export default function CourseSearchTab() {
     </div>
   );
 }
+
