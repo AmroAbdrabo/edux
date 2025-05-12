@@ -1,23 +1,11 @@
 import type { Course, StudentProfile, TranscriptItem, EnrolledCourse } from './types';
 
 export const mockCourses: Course[] = [
-  {
-    id: 'crs101',
-    code: 'CS101',
-    name: 'Introduction to Computer Science',
-    description: 'A foundational course covering basic concepts of programming and computer science.',
-    credits: 3,
-    instructor: 'Dr. Ada Lovelace',
-    department: 'Computer Science',
-    semester: 'Fall 2024',
-    schedule: 'Mon, Wed 9:00 AM - 10:15 AM',
-    deadline: new Date(2024, 7, 15).toISOString(), // Aug 15, 2024
-    type: 'major',
-  },
+  
   {
     id: 'crs102',
     code: 'MA201',
-    name: 'Calculus I',
+    name: 'Jeff',
     description: 'Introduction to differential calculus.',
     credits: 4,
     instructor: 'Dr. Isaac Newton',

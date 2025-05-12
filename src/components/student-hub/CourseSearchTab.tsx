@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useMemo, useCallback } from 'react';
@@ -10,12 +9,13 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { ScrollArea } from '@/components/ui/scroll-area';
 import CourseCard from './CourseCard';
 import RegistrationCart from './RegistrationCart';
-import { Search, Filter, XCircle } from 'lucide-react';
+import CourseScheduleCalendar from './CourseScheduleCalendar'; // Added import
+import { Search, Filter, XCircle, CalendarClock } from 'lucide-react'; // Added CalendarClock
 
-const departments = [...new Set(mockCourses.map(course => course.department))];
-const semesters = [...new Set(mockCourses.map(course => course.semester))];
+const departments = [...new Set(mockCourses.map(course => course.department))].filter(Boolean);
+const semesters = [...new Set(mockCourses.map(course => course.semester))].filter(Boolean);
 
-const ALL_OPTIONS_VALUE = "__ALL__"; // Unique value for "All" options to avoid empty string in SelectItem
+const ALL_OPTIONS_VALUE = "__ALL__"; 
 
 export default function CourseSearchTab() {
   const [searchTerm, setSearchTerm] = useState('');
@@ -43,7 +43,7 @@ export default function CourseSearchTab() {
   }, [searchTerm, filters]);
 
   const handleFilterChange = (filterName: keyof typeof filters, value: string) => {
-    setFilters(prev => ({ ...prev, [filterName]: value }));
+    setFilters(prev => ({ ...prev, [filterName]: value === ALL_OPTIONS_VALUE ? '' : value }));
   };
 
   const clearFilters = () => {
@@ -70,10 +70,7 @@ export default function CourseSearchTab() {
   }, []);
 
   const handleRegister = useCallback(() => {
-    // In a real app, this would send data to a backend.
     console.log("Registering courses:", selectedCourses);
-    // Potentially clear cart after registration or move to an "enrolled" state
-    // setSelectedCourses([]); 
   }, [selectedCourses]);
 
 
@@ -103,8 +100,8 @@ export default function CourseSearchTab() {
               className="text-base"
             />
             <Select 
-              value={filters.department} 
-              onValueChange={(value) => handleFilterChange('department', value === ALL_OPTIONS_VALUE ? '' : value)}
+              value={filters.department || ALL_OPTIONS_VALUE} 
+              onValueChange={(value) => handleFilterChange('department', value)}
             >
               <SelectTrigger className="text-base"><SelectValue placeholder="Filter by Department" /></SelectTrigger>
               <SelectContent>
@@ -113,8 +110,8 @@ export default function CourseSearchTab() {
               </SelectContent>
             </Select>
             <Select 
-              value={filters.semester} 
-              onValueChange={(value) => handleFilterChange('semester', value === ALL_OPTIONS_VALUE ? '' : value)}
+              value={filters.semester || ALL_OPTIONS_VALUE} 
+              onValueChange={(value) => handleFilterChange('semester', value)}
             >
               <SelectTrigger className="text-base"><SelectValue placeholder="Filter by Semester" /></SelectTrigger>
               <SelectContent>
@@ -146,6 +143,9 @@ export default function CourseSearchTab() {
             )}
           </ScrollArea>
         </div>
+        
+        {/* Course Schedule Calendar */}
+        <CourseScheduleCalendar courses={selectedCourses} />
       </div>
 
       {/* Registration Cart */}
@@ -160,4 +160,3 @@ export default function CourseSearchTab() {
     </div>
   );
 }
-
