@@ -1,7 +1,9 @@
+
 'use client';
 
 import type React from 'react';
 import { useState } from 'react';
+import { useRouter } from 'next/navigation'; // Added import
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -13,6 +15,7 @@ export default function LoginForm() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const { toast } = useToast();
+  const router = useRouter(); // Added useRouter
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -20,11 +23,14 @@ export default function LoginForm() {
     console.log('Login attempt:', { email, password });
     toast({
       title: 'Login Attempted',
-      description: 'Login functionality is not yet implemented.',
+      description: 'Login functionality is a mock. Redirecting to dashboard.', // Updated description
     });
-    // For now, we'll just log and show a toast.
-    // setEmail('');
+    // For now, we'll just log, show a toast, and redirect.
+    // setEmail(''); // Keep form fields filled for demo or clear as needed
     // setPassword('');
+
+    // Redirect to the student hub page
+    router.push('/student-hub'); 
   };
 
   return (

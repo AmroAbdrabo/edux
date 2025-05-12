@@ -1,40 +1,31 @@
-import Header from '@/components/student-hub/Header';
-import CourseSearchTab from '@/components/student-hub/CourseSearchTab';
-import TranscriptEnrollmentTab from '@/components/student-hub/TranscriptEnrollmentTab';
-import ProfileManagementTab from '@/components/student-hub/ProfileManagementTab';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Search, ListChecks, UserCog } from 'lucide-react';
 
-export default function StudentHubPage() {
+import type { Metadata } from 'next';
+import LoginForm from '@/components/auth/LoginForm';
+import { GraduationCap } from 'lucide-react';
+
+export const metadata: Metadata = {
+  title: 'Login - Student Hub',
+  description: 'Log in to access your Student Hub account.',
+};
+
+export default function LoginPage() {
   return (
-    <div className="min-h-screen flex flex-col bg-background">
-      <Header />
-      <main className="flex-grow container mx-auto px-0 sm:px-4 py-6">
-        <Tabs defaultValue="course-search" className="w-full">
-          <TabsList className="grid w-full grid-cols-1 sm:grid-cols-3 h-auto sm:h-12 mb-6 rounded-lg shadow-md bg-card">
-            <TabsTrigger value="course-search" className="py-2.5 text-sm md:text-base data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-lg rounded-md">
-              <Search className="mr-2 h-5 w-5" /> Course Search & Registration
-            </TabsTrigger>
-            <TabsTrigger value="transcript-enrollment" className="py-2.5 text-sm md:text-base data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-lg rounded-md">
-              <ListChecks className="mr-2 h-5 w-5" /> Transcript & Enrollment
-            </TabsTrigger>
-            <TabsTrigger value="profile-management" className="py-2.5 text-sm md:text-base data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-lg rounded-md">
-              <UserCog className="mr-2 h-5 w-5" /> Profile Management
-            </TabsTrigger>
-          </TabsList>
-          
-          <TabsContent value="course-search">
-            <CourseSearchTab />
-          </TabsContent>
-          <TabsContent value="transcript-enrollment">
-            <TranscriptEnrollmentTab />
-          </TabsContent>
-          <TabsContent value="profile-management">
-            <ProfileManagementTab />
-          </TabsContent>
-        </Tabs>
+    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-background via-muted to-background p-4 sm:p-8">
+      <header className="text-center mb-10">
+        <GraduationCap className="h-20 w-20 mx-auto text-primary mb-4" />
+        <h1 className="text-5xl font-extrabold text-primary tracking-tight">
+          Student Hub
+        </h1>
+        <p className="text-muted-foreground text-xl mt-2">
+          Your central platform for academic success.
+        </p>
+      </header>
+      
+      <main className="w-full flex justify-center">
+        <LoginForm />
       </main>
-      <footer className="text-center py-4 border-t text-muted-foreground text-sm">
+
+      <footer className="text-center py-8 mt-10 text-muted-foreground text-sm">
         © {new Date().getFullYear()} Student Hub. All rights reserved.
       </footer>
     </div>
