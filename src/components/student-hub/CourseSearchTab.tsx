@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useMemo, useCallback } from 'react';
-import type { Course, CreditSummary, CourseType } from '@/lib/types';
+import type { Course, CreditSummary, ContactInfoProps, CourseType } from '@/lib/types';
 import { mockCourses } from '@/lib/mock-data';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -9,13 +9,14 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { ScrollArea } from '@/components/ui/scroll-area';
 import CourseCard from './CourseCard';
 import RegistrationCart from './RegistrationCart';
+import ContactInformation from './ContactInfo';
 import CourseScheduleCalendar from './CourseScheduleCalendar'; // Added import
-import { Search, Filter, XCircle, CalendarClock } from 'lucide-react'; // Added CalendarClock
+import { Search, Filter, XCircle, CalendarClock, ChevronDown, ChevronUp } from 'lucide-react'; // Added CalendarClock, ChevronDown, ChevronUp
 
 const departments = [...new Set(mockCourses.map(course => course.department))].filter(Boolean);
 const semesters = [...new Set(mockCourses.map(course => course.semester))].filter(Boolean);
 
-const ALL_OPTIONS_VALUE = "__ALL__"; 
+const ALL_OPTIONS_VALUE = "__ALL__";
 
 export default function CourseSearchTab() {
   const [searchTerm, setSearchTerm] = useState('');
@@ -26,13 +27,15 @@ export default function CourseSearchTab() {
     courseCode: '',
   });
   const [selectedCourses, setSelectedCourses] = useState<Course[]>([]);
+  // --- Added State for Collapsible Course List ---
+  const [isCourseListOpen, setIsCourseListOpen] = useState(true); // Default to open
 
   const filteredCourses = useMemo(() => {
     return mockCourses.filter(course => {
-      const keywordMatch = searchTerm.toLowerCase() === '' || 
+      const keywordMatch = searchTerm.toLowerCase() === '' ||
         course.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         course.description.toLowerCase().includes(searchTerm.toLowerCase());
-      
+
       const departmentMatch = filters.department === '' || course.department === filters.department;
       const semesterMatch = filters.semester === '' || course.semester === filters.semester;
       const instructorMatch = filters.instructor === '' || course.instructor.toLowerCase().includes(filters.instructor.toLowerCase());
@@ -73,10 +76,17 @@ export default function CourseSearchTab() {
     console.log("Registering courses:", selectedCourses);
   }, [selectedCourses]);
 
+  // --- Added Toggle Function ---
+  const toggleCourseList = useCallback(() => {
+    setIsCourseListOpen(prev => !prev);
+  }, []);
+
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 p-4 md:p-6">
       <div className="lg:col-span-2 space-y-6">
+
+
         {/* Search and Filters */}
         <div className="bg-card p-6 rounded-lg shadow-md">
           <h2 className="text-2xl font-semibold mb-4 text-primary flex items-center"><Search className="mr-2" /> Course Search</h2>
@@ -99,8 +109,8 @@ export default function CourseSearchTab() {
               onChange={(e) => handleFilterChange('instructor', e.target.value)}
               className="text-base"
             />
-            <Select 
-              value={filters.department || ALL_OPTIONS_VALUE} 
+            <Select
+              value={filters.department || ALL_OPTIONS_VALUE}
               onValueChange={(value) => handleFilterChange('department', value)}
             >
               <SelectTrigger className="text-base"><SelectValue placeholder="Filter by Department" /></SelectTrigger>
@@ -109,8 +119,8 @@ export default function CourseSearchTab() {
                 {departments.map(dept => <SelectItem key={dept} value={dept}>{dept}</SelectItem>)}
               </SelectContent>
             </Select>
-            <Select 
-              value={filters.semester || ALL_OPTIONS_VALUE} 
+            <Select
+              value={filters.semester || ALL_OPTIONS_VALUE}
               onValueChange={(value) => handleFilterChange('semester', value)}
             >
               <SelectTrigger className="text-base"><SelectValue placeholder="Filter by Semester" /></SelectTrigger>
@@ -125,38 +135,59 @@ export default function CourseSearchTab() {
           </div>
         </div>
 
-        {/* Course List */}
+        {/* Course List - Modified for Collapsible */}
         <div className="bg-card p-6 rounded-lg shadow-md">
-           <h2 className="text-2xl font-semibold mb-4 text-primary flex items-center"><Filter className="mr-2" /> Available Courses ({filteredCourses.length})</h2>
-          <ScrollArea className="h-[600px] pr-3">
-            {filteredCourses.length > 0 ? (
-              filteredCourses.map(course => (
-                <CourseCard 
-                  key={course.id} 
-                  course={course} 
-                  onAddCourse={addCourseToCart} 
-                  isRegistered={!!selectedCourses.find(c => c.id === course.id)}
-                />
-              ))
-            ) : (
-              <p className="text-muted-foreground text-center py-10">No courses match your criteria. Try adjusting your search or filters.</p>
-            )}
-          </ScrollArea>
+           {/* --- Modified Header: Added onClick, cursor-pointer, justify-between, and chevron icon --- */}
+           <h2
+            className="text-2xl font-semibold mb-4 text-primary flex items-center justify-between cursor-pointer"
+            onClick={toggleCourseList}
+           >
+             <div className="flex items-center"> {/* Group icon and text */}
+               <Filter className="mr-2" /> Available Courses ({filteredCourses.length})
+             </div>
+             {/* --- Conditional Chevron Icon --- */}
+             {isCourseListOpen ? <ChevronUp className="h-6 w-6 text-muted-foreground" /> : <ChevronDown className="h-6 w-6 text-muted-foreground" />}
+           </h2>
+           {/* --- Conditionally render the ScrollArea --- */}
+           {isCourseListOpen && (
+             <ScrollArea className="h-[600px] pr-3">
+               {filteredCourses.length > 0 ? (
+                 filteredCourses.map(course => (
+                   <CourseCard
+                     key={course.id}
+                     course={course}
+                     onAddCourse={addCourseToCart}
+                     isRegistered={!!selectedCourses.find(c => c.id === course.id)}
+                   />
+                 ))
+               ) : (
+                 <p className="text-muted-foreground text-center py-10">No courses match your criteria. Try adjusting your search or filters.</p>
+               )}
+             </ScrollArea>
+           )}
         </div>
-        
-        {/* Course Schedule Calendar */}
-        <CourseScheduleCalendar courses={selectedCourses} />
+
+      {/* Course Schedule Calendar */}
+      <CourseScheduleCalendar courses={selectedCourses} />
       </div>
 
       {/* Registration Cart */}
-      <div className="lg:col-span-1">
-        <RegistrationCart 
-          selectedCourses={selectedCourses} 
+      <div className="lg:col-span-1 space-y-6">
+        <RegistrationCart
+          selectedCourses={selectedCourses}
           onRemoveCourse={removeCourseFromCart}
           creditSummary={creditSummary}
           onRegister={handleRegister}
         />
+         {/* Insert component containing contact information containing email, phone number, office, and hours here */}
+         <ContactInformation
+          email="hecmaster@unil.ch"
+          phone="+41 21 123 45 67"
+          office="NEF 205"
+          hours="Monday, Tuesday: 9:00 AM - 13:00 PM"
+        />
       </div>
+
     </div>
   );
 }

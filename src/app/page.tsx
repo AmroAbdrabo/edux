@@ -10,8 +10,8 @@ export default function StudentHubPage() {
     <div className="min-h-screen flex flex-col bg-background">
       <Header />
       <main className="flex-grow container mx-auto px-0 sm:px-4 py-6">
-        <Tabs defaultValue="course-search" className="w-full">
-          <TabsList className="grid w-full grid-cols-1 sm:grid-cols-3 h-auto sm:h-12 mb-6 rounded-lg shadow-md bg-card">
+        <Tabs defaultValue="course-search" className="w-full" style={{ border: '0px solid blue' }}>
+          <TabsList className="grid w-auto grid-cols-1 sm:grid-cols-3 h-auto sm:h-12 mb-6 rounded-lg shadow-md bg-card mx-8" style={{ border: '0px solid green' }}>
             <TabsTrigger value="course-search" className="py-2.5 text-sm md:text-base data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-lg rounded-md">
               <Search className="mr-2 h-5 w-5" /> Course Search & Registration
             </TabsTrigger>
@@ -23,7 +23,7 @@ export default function StudentHubPage() {
             </TabsTrigger>
           </TabsList>
           
-          <TabsContent value="course-search">
+          <TabsContent value="course-search" style={{ border: '0px solid red' }}>
             <CourseSearchTab />
           </TabsContent>
           <TabsContent value="transcript-enrollment">

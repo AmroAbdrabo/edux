@@ -25,6 +25,14 @@ export interface StudentProfile {
   secondaryEmail?: string;
 }
 
+export interface ContactInfoProps {
+  email: string;
+  phone: string;
+  office: string;
+  hours: string;
+}
+
+
 export interface TranscriptItem {
   id: string;
   courseCode: string;
