@@ -14,7 +14,7 @@ export default function LoginPage() {
       <header className="text-center mb-10">
         <GraduationCap className="h-20 w-20 mx-auto text-primary mb-4" />
         <h1 className="text-5xl font-extrabold text-primary tracking-tight">
-          Student Hub
+          UNIL EduX
         </h1>
         <p className="text-muted-foreground text-xl mt-2">
           Your central platform for academic success.
@@ -26,7 +26,7 @@ export default function LoginPage() {
       </main>
 
       <footer className="text-center py-8 mt-10 text-muted-foreground text-sm">
-        © {new Date().getFullYear()} Student Hub. All rights reserved.
+        © {new Date().getFullYear()} UNIL EduX. All rights reserved.
       </footer>
     </div>
   );

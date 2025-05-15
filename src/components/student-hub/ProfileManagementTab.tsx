@@ -102,7 +102,7 @@ export default function ProfileManagementTab() {
                   <FormItem>
                     <FormLabel>Full Name</FormLabel>
                     <FormControl>
-                      <Input placeholder="Your full name" {...field} className="text-base" />
+                      <Input placeholder="Your full name" {...field} readOnly className="bg-white text-base" />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -115,7 +115,7 @@ export default function ProfileManagementTab() {
                   <FormItem>
                     <FormLabel>Student ID</FormLabel>
                     <FormControl>
-                      <Input {...field} readOnly className="bg-muted text-base" />
+                      <Input {...field} readOnly className="bg-white text-base" />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -128,7 +128,7 @@ export default function ProfileManagementTab() {
                   <FormItem>
                     <FormLabel>Primary Email</FormLabel>
                     <FormControl>
-                      <Input {...field} readOnly className="bg-muted text-base" />
+                      <Input {...field} readOnly className="bg-white text-base" />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

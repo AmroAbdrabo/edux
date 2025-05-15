@@ -38,7 +38,7 @@ export default function LoginForm() {
       <CardHeader className="space-y-1 text-center p-6">
         <CardTitle className="text-3xl font-bold text-primary">Welcome Back!</CardTitle>
         <CardDescription className="text-muted-foreground">
-          Enter your credentials to access your Student Hub account.
+          Enter your credentials to access your UNIL account.
         </CardDescription>
       </CardHeader>
       <form onSubmit={handleSubmit}>

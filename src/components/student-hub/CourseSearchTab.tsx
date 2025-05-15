@@ -28,7 +28,7 @@ export default function CourseSearchTab() {
     courseCode: '',
   });
   const [selectedCourses, setSelectedCourses] = useState<Course[]>([]);
-  const [isCourseListOpen, setIsCourseListOpen] = useState(true);
+  const [isCourseListOpen, setIsCourseListOpen] = useState(false);
 
   const filteredCourses = useMemo(() => {
     return mockCourses.filter(course => {
