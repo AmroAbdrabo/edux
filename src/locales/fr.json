@@ -1,0 +1,23 @@
+{
+  "studentHub": "Portail Étudiant",
+  "platformDescription": "Votre plateforme centrale pour la réussite académique.",
+  "welcomeBack": "Bon Retour !",
+  "loginPrompt": "Entrez vos identifiants pour accéder à votre compte Portail Étudiant.",
+  "emailAddress": "Adresse E-mail",
+  "emailPlaceholder": "votre.email@universite.edu",
+  "password": "Mot de passe",
+  "signIn": "Se connecter",
+  "forgotPassword": "Mot de passe oublié ?",
+  "resetItHere": "Réinitialiser ici",
+  "copyright": "© {year} Portail Étudiant. Tous droits réservés.",
+  "switchToFrench": "Français",
+  "switchToEnglish": "English",
+  "dashboardTitle": "Tableau de Bord",
+  "dashboardDescription": "Gérez vos cours, relevé de notes et profil.",
+  "courseSearchRegistration": "Recherche et Inscription aux Cours",
+  "transcriptEnrollment": "Relevé de Notes et Inscription",
+  "profileManagement": "Gestion de Profil",
+  "loginAttempted": "Tentative de connexion",
+  "loginMockRedirect": "La fonctionnalité de connexion est une maquette. Redirection vers le tableau de bord.",
+  "loadingTranslations": "Chargement des traductions..."
+}

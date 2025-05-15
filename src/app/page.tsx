@@ -1,33 +1,26 @@
+// This file is effectively removed and replaced by src/app/[locale]/page.tsx
+// However, to avoid issues with the build system expecting a root page.tsx,
+// we can make it a simple redirect to the default locale or a placeholder.
+// For now, let's assume middleware handles the redirect.
+// If issues arise, we might need a redirect component here.
 
-import type { Metadata } from 'next';
-import LoginForm from '@/components/auth/LoginForm';
-import { GraduationCap } from 'lucide-react';
+// For simplicity and to ensure middleware handles this, we can keep it minimal
+// or remove it if middleware correctly routes from `/` to `/[locale]`.
+// If Next.js requires a root page.tsx, this could be a placeholder.
+// The middleware should handle redirecting from `/` to `/[defaultLocale]`.
 
-export const metadata: Metadata = {
-  title: 'Login - Student Hub',
-  description: 'Log in to access your Student Hub account.',
-};
+// Let's make this a redirect component to be safe, though middleware should ideally handle it.
+import { redirect } from 'next/navigation';
 
-export default function LoginPage() {
-  return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-background via-muted to-background p-4 sm:p-8">
-      <header className="text-center mb-10">
-        <GraduationCap className="h-20 w-20 mx-auto text-primary mb-4" />
-        <h1 className="text-5xl font-extrabold text-primary tracking-tight">
-          Student Hub
-        </h1>
-        <p className="text-muted-foreground text-xl mt-2">
-          Your central platform for academic success.
-        </p>
-      </header>
-      
-      <main className="w-full flex justify-center">
-        <LoginForm />
-      </main>
-
-      <footer className="text-center py-8 mt-10 text-muted-foreground text-sm">
-        © {new Date().getFullYear()} Student Hub. All rights reserved.
-      </footer>
-    </div>
-  );
+export default function RootPage() {
+  // The middleware should handle redirecting to the default locale.
+  // If for some reason middleware is bypassed or not configured for the root,
+  // this provides a fallback.
+  // However, with path-based localization, /page.tsx at the root is less common.
+  // We will rely on the middleware to redirect from `/` to `/en` (or default locale).
+  // Thus, this page should ideally not be reached directly if middleware is active.
+  
+  // If your next.config.js i18n is set up, Next.js might automatically handle this.
+  // For clarity, explicit middleware is better.
+  redirect('/en'); // Redirect to default locale
 }

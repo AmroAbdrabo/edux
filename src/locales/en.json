@@ -1,0 +1,23 @@
+{
+  "studentHub": "Student Hub",
+  "platformDescription": "Your central platform for academic success.",
+  "welcomeBack": "Welcome Back!",
+  "loginPrompt": "Enter your credentials to access your Student Hub account.",
+  "emailAddress": "Email Address",
+  "emailPlaceholder": "your.email@university.edu",
+  "password": "Password",
+  "signIn": "Sign In",
+  "forgotPassword": "Forgot your password?",
+  "resetItHere": "Reset it here",
+  "copyright": "© {year} Student Hub. All rights reserved.",
+  "switchToFrench": "Français",
+  "switchToEnglish": "English",
+  "dashboardTitle": "Dashboard",
+  "dashboardDescription": "Manage your courses, transcript, and profile.",
+  "courseSearchRegistration": "Course Search & Registration",
+  "transcriptEnrollment": "Transcript & Enrollment",
+  "profileManagement": "Profile Management",
+  "loginAttempted": "Login Attempted",
+  "loginMockRedirect": "Login functionality is a mock. Redirecting to dashboard.",
+  "loadingTranslations": "Loading translations..."
+}
