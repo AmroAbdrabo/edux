@@ -1,3 +1,4 @@
+
 import type {NextConfig} from 'next';
 
 const nextConfig: NextConfig = {
@@ -18,6 +19,7 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  // Removed i18n block as it's for Pages Router and may conflict with App Router middleware
 };
 
 export default nextConfig;

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo, useCallback } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import type { Course, CreditSummary, ContactInfoProps, CourseType } from '@/lib/types';
 import { mockCourses } from '@/lib/mock-data';
 import { Input } from '@/components/ui/input';
@@ -9,6 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { ScrollArea } from '@/components/ui/scroll-area';
 import CourseCard from './CourseCard';
 import RegistrationCart from './RegistrationCart';
+import { loadTranslations } from '@/lib/i18n-client'; // Updated import path
 import ContactInformation from './ContactInfo';
 import CourseScheduleCalendar from './CourseScheduleCalendar'; // Added import
 // Added Download icon to the import
@@ -19,7 +20,12 @@ const semesters = [...new Set(mockCourses.map(course => course.semester))].filte
 
 const ALL_OPTIONS_VALUE = "__ALL__";
 
-export default function CourseSearchTab() {
+interface CourseSearchTabProps {
+  locale: string;
+}
+
+
+export default function CourseSearchTab({ locale }: CourseSearchTabProps) {
   const [searchTerm, setSearchTerm] = useState('');
   const [filters, setFilters] = useState({
     department: '',
@@ -29,6 +35,16 @@ export default function CourseSearchTab() {
   });
   const [selectedCourses, setSelectedCourses] = useState<Course[]>([]);
   const [isCourseListOpen, setIsCourseListOpen] = useState(false);
+  const [translations, setTranslations] = useState<any>({});
+
+  useEffect(() => {
+      const fetchTranslations = async () => {
+        const t = await loadTranslations(locale);
+        setTranslations(t);
+      };
+      fetchTranslations();
+    }, [locale]);
+  
 
   const filteredCourses = useMemo(() => {
     return mockCourses.filter(course => {
@@ -75,7 +91,7 @@ export default function CourseSearchTab() {
   const handleRegister = useCallback(() => {
     // In a real application, you would send selectedCourses to your backend API
     console.log("Registering courses:", selectedCourses);
-    alert(`Simulating registration for ${selectedCourses.length} courses.`);
+    // alert(`Simulating registration for ${selectedCourses.length} courses.`);
     // Optionally clear cart after registration: setSelectedCourses([]);
   }, [selectedCourses]);
 
@@ -100,24 +116,24 @@ export default function CourseSearchTab() {
 
         {/* Search and Filters */}
         <div className="bg-card p-6 rounded-lg shadow-md">
-          <h2 className="text-2xl font-semibold mb-4 text-primary flex items-center"><Search className="mr-2" /> Course Search</h2>
+          <h2 className="text-2xl font-semibold mb-4 text-primary flex items-center"><Search className="mr-2" /> {translations.courseSearch}</h2>
           {/* --- Grid layout for filter controls --- */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
             {/* --- Filter Inputs and Selects --- */}
             <Input
-              placeholder="Search by keyword (name, description)..."
+              placeholder={translations.filterKeywords}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="text-base"
             />
             <Input
-              placeholder="Filter by Course Code (e.g., CS101)"
+              placeholder={translations.filterCode}
               value={filters.courseCode}
               onChange={(e) => handleFilterChange('courseCode', e.target.value)}
               className="text-base"
             />
             <Input
-              placeholder="Filter by Instructor Name"
+              placeholder={translations.filterInstructor}
               value={filters.instructor}
               onChange={(e) => handleFilterChange('instructor', e.target.value)}
               className="text-base"
@@ -128,7 +144,7 @@ export default function CourseSearchTab() {
             >
               <SelectTrigger className="text-base"><SelectValue placeholder="Filter by Department" /></SelectTrigger>
               <SelectContent>
-                <SelectItem value={ALL_OPTIONS_VALUE}>All Departments</SelectItem>
+                <SelectItem value={ALL_OPTIONS_VALUE}>{translations.allDepartments}</SelectItem>
                 {departments.map(dept => <SelectItem key={dept} value={dept}>{dept}</SelectItem>)}
               </SelectContent>
             </Select>
@@ -138,13 +154,13 @@ export default function CourseSearchTab() {
             >
               <SelectTrigger className="text-base"><SelectValue placeholder="Filter by Semester" /></SelectTrigger>
               <SelectContent>
-                <SelectItem value={ALL_OPTIONS_VALUE}>All Semesters</SelectItem>
+                <SelectItem value={ALL_OPTIONS_VALUE}>{translations.allSemesters}</SelectItem>
                 {semesters.map(sem => <SelectItem key={sem} value={sem}>{sem}</SelectItem>)}
               </SelectContent>
             </Select>
             {/* --- Clear Filters Button (spans 1 column on medium screens) --- */}
             <Button onClick={clearFilters} variant="outline" className="md:col-span-1 flex items-center justify-center text-base">
-              <XCircle className="mr-2 h-4 w-4" /> Clear Filters
+              <XCircle className="mr-2 h-4 w-4" /> {translations.clearFilter}
             </Button>
 
             {/* --- Wide Blue Download PDF Button (spans 2 columns on medium screens) --- */}
@@ -160,7 +176,7 @@ export default function CourseSearchTab() {
                 className="w-full flex items-center justify-center text-base" // Make button fill the link's width
               >
                 <Download className="mr-2 h-4 w-4" />
-                Download Study Plan (PDF)
+                {translations.downloadStudyPlan}
               </Button>
             </a>
             {/* --- End Download Button --- */}
@@ -174,7 +190,7 @@ export default function CourseSearchTab() {
             onClick={toggleCourseList}
            >
              <div className="flex items-center">
-               <Filter className="mr-2" /> Available Courses ({filteredCourses.length})
+               <Filter className="mr-2" /> {translations.availableCourses} ({filteredCourses.length})
              </div>
              {isCourseListOpen ? <ChevronUp className="h-6 w-6 text-muted-foreground" /> : <ChevronDown className="h-6 w-6 text-muted-foreground" />}
            </h2>
@@ -197,7 +213,7 @@ export default function CourseSearchTab() {
         </div>
 
         {/* Course Schedule Calendar */}
-        <CourseScheduleCalendar courses={selectedCourses} />
+        <CourseScheduleCalendar courses={selectedCourses} locale={locale} />
       </div>
 
       {/* Right Sidebar: Registration Cart & Contact Info */}
@@ -207,6 +223,7 @@ export default function CourseSearchTab() {
           onRemoveCourse={removeCourseFromCart}
           creditSummary={creditSummary}
           onRegister={handleRegister}
+          locale={locale}
         />
          <ContactInformation
           email="hecmaster@unil.ch"

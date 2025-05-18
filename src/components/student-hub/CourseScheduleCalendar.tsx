@@ -3,7 +3,8 @@
 import type { Course } from '@/lib/types';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { CalendarClock } from 'lucide-react';
-import { useMemo } from 'react';
+import { useState, useEffect, useMemo } from 'react';
+import { loadTranslations } from '@/lib/i18n-client'; // Updated import path
 
 type DayKey = 'Mon' | 'Tue' | 'Wed' | 'Thu' | 'Fri';
 
@@ -110,138 +111,172 @@ const colorPalette = [
 
 interface CourseScheduleCalendarProps {
   courses: Course[];
+  locale: string;
 }
 
-export default function CourseScheduleCalendar({ courses }: CourseScheduleCalendarProps) {
-  const processedEvents = useMemo(() => {
-    return courses.flatMap((course, index) => parseScheduleString(course, colorPalette, index));
-  }, [courses]);
+export default function CourseScheduleCalendar({ courses, locale }: CourseScheduleCalendarProps) {
+  const processedEvents = useMemo(
+    () =>
+      courses.flatMap((course, index) =>
+        parseScheduleString(course, colorPalette, index)
+      ),
+    [courses]
+  );
 
   const timeSlots = Array.from(
     { length: CALENDAR_END_HOUR - CALENDAR_START_HOUR },
     (_, i) => CALENDAR_START_HOUR + i
   );
 
+  const [translations, setTranslations] = useState<any>({});
+  useEffect(() => {
+    const fetchTranslations = async () => {
+      const t = await loadTranslations(locale);
+      setTranslations(t);
+    };
+    fetchTranslations();
+  }, [locale]);
+
+  // Pull out weekday translations (with English fallbacks)
+  const weekdaysShort: Record<DayKey, string> = {
+    Mon: translations.weekdaysShort?.Mon || 'Mon',
+    Tue: translations.weekdaysShort?.Tue || 'Tue',
+    Wed: translations.weekdaysShort?.Wed || 'Wed',
+    Thu: translations.weekdaysShort?.Thu || 'Thu',
+    Fri: translations.weekdaysShort?.Fri || 'Fri',
+  };
+  const weekdaysFull: Record<DayKey, string> = {
+    Mon: translations.weekdaysFull?.Mon || 'Monday',
+    Tue: translations.weekdaysFull?.Tue || 'Tuesday',
+    Wed: translations.weekdaysFull?.Wed || 'Wednesday',
+    Thu: translations.weekdaysFull?.Thu || 'Thursday',
+    Fri: translations.weekdaysFull?.Fri || 'Friday',
+  };
+
   const calendarGridStartMinute = CALENDAR_START_HOUR * 60;
-  const totalCalendarHeight = (CALENDAR_END_HOUR - CALENDAR_START_HOUR) * HOUR_HEIGHT_PX;
 
   return (
     <Card className="shadow-lg">
       <CardHeader>
         <CardTitle className="flex items-center text-2xl text-primary">
-          <CalendarClock className="mr-2 h-6 w-6" /> Weekly Schedule Preview
+          <CalendarClock className="mr-2 h-6 w-6" />
+          {translations.schedulePreview || 'Course Schedule'}
         </CardTitle>
       </CardHeader>
       <CardContent>
         {courses.length === 0 ? (
           <p className="text-muted-foreground text-center py-10">
-            Your weekly schedule will appear here once you add courses to your cart.
+            {translations.schedulePlaceholder}
           </p>
         ) : (
           <div className="overflow-x-auto">
-            <div className="min-w-[700px] relative"> {/* Make container relative for absolute positioning of events */}
-              {/* Grid Background Layer */}
-              <div className="grid grid-cols-[60px_repeat(5,1fr)] border border-border rounded-md overflow-hidden"> {/* Added overflow-hidden */}
+            <div className="min-w-[700px] relative">
+              <div className="grid grid-cols-[60px_repeat(5,1fr)] border border-border rounded-md overflow-hidden">
                 {/* --- Header Row --- */}
-                {/* Time Slot Header */}
-                <div className="p-2 border-r border-b border-border font-semibold text-sm text-muted-foreground sticky top-0 left-0 bg-card z-20"> {/* Increased z-index */}
-                  Time
+                <div className="p-2 border-r border-b border-border font-semibold text-sm text-muted-foreground sticky top-0 left-0 bg-card z-20">
+                  {translations.timeLabel || 'Time'}
                 </div>
-                {/* Day Headers */}
-                {DAY_KEYS_ORDERED.map(day => (
-                  <div key={day} className="p-2 border-r border-b border-border font-semibold text-sm text-center text-muted-foreground bg-card sticky top-0 z-10"> {/* Added sticky top */}
-                    {day === DAY_KEYS_ORDERED[DAY_KEYS_ORDERED.length - 1] ? day : day /* Remove right border if needed: `${day === DAY_KEYS_ORDERED[DAY_KEYS_ORDERED.length - 1] ? '' : 'border-r'}` */}
+                {DAY_KEYS_ORDERED.map((dayKey) => (
+                  <div
+                    key={dayKey}
+                    className="p-2 border-r border-b border-border font-semibold text-sm text-center text-muted-foreground bg-card sticky top-0 z-10"
+                    title={weekdaysFull[dayKey]}
+                  >
+                    {weekdaysShort[dayKey]}
                   </div>
                 ))}
 
-                {/* --- Time Slot Rows & Grid Lines --- */}
-                {timeSlots.map((hour, hourIndex) => (
-                  // Each iteration creates one row in the grid
-                  <div key={hour} className="contents"> {/* Use 'contents' to make children direct grid items */}
-
-                    {/* Time Label Cell */}
+                {/* --- Time Slot Rows & Grid --- */}
+                {timeSlots.map((hour, idx) => (
+                  <div key={hour} className="contents">
                     <div
                       className="p-2 border-r border-b border-border text-xs text-muted-foreground sticky left-0 bg-card z-10 flex items-center justify-center"
-                      style={{ height: `${HOUR_HEIGHT_PX}px`, gridRow: hourIndex + 2 }} // Explicit grid row
+                      style={{ height: `${HOUR_HEIGHT_PX}px`, gridRow: idx + 2 }}
                     >
-                      {`${hour % 12 === 0 ? 12 : hour % 12}:00 ${hour < 12 || hour === 24 ? 'AM' : 'PM'}`}
+                      {`${hour % 12 === 0 ? 12 : hour % 12}:00 ${
+                        hour < 12 || hour === 24 ? 'AM' : 'PM'
+                      }`}
                     </div>
-
-                    {/* Grid Cells for each Day in this Time Slot */}
-                    {DAY_KEYS_ORDERED.map((dayKey, dayIndex) => (
+                    {DAY_KEYS_ORDERED.map((day, dayIdx) => (
                       <div
-                        key={`${dayKey}-${hour}`}
-                        className={`border-r border-b border-border ${dayKey === DAY_KEYS_ORDERED[DAY_KEYS_ORDERED.length - 1] ? 'border-r-0' : ''} ${hourIndex === timeSlots.length - 1 ? 'border-b-0' : ''} bg-background/20`} // Add subtle bg, remove outer borders
-                        style={{ height: `${HOUR_HEIGHT_PX}px`, gridRow: hourIndex + 2, gridColumn: dayIndex + 2 }} // Explicit grid row & col
-                      >
-                        {/* This cell is purely for background/grid lines */}
-                      </div>
+                        key={`${day}-${hour}`}
+                        className={`border-r border-b border-border ${
+                          day === 'Fri' ? 'border-r-0' : ''
+                        } ${idx === timeSlots.length - 1 ? 'border-b-0' : ''} bg-background/20`}
+                        style={{
+                          height: `${HOUR_HEIGHT_PX}px`,
+                          gridRow: idx + 2,
+                          gridColumn: dayIdx + 2,
+                        }}
+                      />
                     ))}
                   </div>
                 ))}
               </div>
 
-              {/* --- Event Rendering Layer --- */}
-              {/* Positioned absolutely on top of the grid background */}
-              {/* This container spans the area where events can be placed */}
+              {/* --- Events Layer --- */}
               <div
-                className="absolute top-0 left-[60px] right-0 bottom-0" // Position over the day columns, adjust left offset for time column
-                style={{ top: `calc(2rem + 1px)` }} // Adjust top offset for header row height (approx 2rem p-2) + border
+                className="absolute left-[60px] right-0 bottom-0"
+                style={{ top: `calc(2rem + 1px)` }}
               >
-                <div className="relative w-full h-full"> {/* Relative container for event positioning */}
-                  {processedEvents.map(event => {
-                      const topOffset = (event.startTimeMinutes - calendarGridStartMinute) * PIXELS_PER_MINUTE;
-                      const eventHeight = (event.endTimeMinutes - event.startTimeMinutes) * PIXELS_PER_MINUTE;
+                <div className="relative w-full h-full">
+                  {processedEvents.map((event) => {
+                    const topOffset =
+                      (event.startTimeMinutes - calendarGridStartMinute) *
+                      PIXELS_PER_MINUTE;
+                    const visibleStart = Math.max(
+                      calendarGridStartMinute,
+                      event.startTimeMinutes
+                    );
+                    const visibleEnd = Math.min(
+                      CALENDAR_END_HOUR * 60,
+                      event.endTimeMinutes
+                    );
+                    const displayTop = Math.max(0, topOffset);
+                    const displayHeight =
+                      Math.max(0, visibleEnd - visibleStart) *
+                      PIXELS_PER_MINUTE;
+                    if (displayHeight <= 0) return null;
+                    const dayIndex = DAY_KEYS_ORDERED.indexOf(event.dayOfWeek);
+                    const colWidth = 100 / DAY_KEYS_ORDERED.length;
+                    const leftPct = dayIndex * colWidth;
+                    const formatTime = (mins: number) => {
+                      const h = Math.floor(mins / 60);
+                      const m = String(mins % 60).padStart(2, '0');
+                      const h12 = h % 12 === 0 ? 12 : h % 12;
+                      const per = h < 12 || h === 24 ? 'AM' : 'PM';
+                      return `${h12}:${m} ${per}`;
+                    };
+                    const timeStr = `${formatTime(
+                      event.startTimeMinutes
+                    )} - ${formatTime(event.endTimeMinutes)}`;
 
-                      // Ensure event is within calendar viewable time
-                      if (event.endTimeMinutes <= calendarGridStartMinute || event.startTimeMinutes >= (CALENDAR_END_HOUR * 60)) {
-                          return null;
-                      }
-
-                      const displayTop = Math.max(0, topOffset);
-                      // Calculate height clipping within the visible calendar hours
-                      const visibleStartTime = Math.max(calendarGridStartMinute, event.startTimeMinutes);
-                      const visibleEndTime = Math.min(CALENDAR_END_HOUR * 60, event.endTimeMinutes);
-                      const displayHeight = Math.max(0, (visibleEndTime - visibleStartTime) * PIXELS_PER_MINUTE);
-
-
-                      if (displayHeight <= 0) return null;
-
-                      // Calculate left position based on day index
-                      const dayIndex = DAY_KEYS_ORDERED.indexOf(event.dayOfWeek);
-                      const dayColumnWidthPercentage = 100 / DAY_KEYS_ORDERED.length; // Assumes equal width columns
-                      const leftPositionPercentage = dayIndex * dayColumnWidthPercentage;
-
-                      // Get start/end time strings
-                      const formatTime = (minutes: number) => {
-                          const h = Math.floor(minutes / 60);
-                          const m = String(minutes % 60).padStart(2,'0');
-                          const hour12 = h % 12 === 0 ? 12 : h % 12;
-                          const period = h < 12 || h === 24 ? 'AM' : 'PM';
-                          return `${hour12}:${m} ${period}`;
-                      }
-                      const timeString = `${formatTime(event.startTimeMinutes)} - ${formatTime(event.endTimeMinutes)}`;
-
-
-                      return (
-                        <div
-                          key={event.id}
-                          className={`absolute rounded-md p-1.5 shadow-md overflow-hidden ${event.bgColorClass} ${event.textColorClass} ${event.borderColorClass} border z-10`} // Add z-10 to ensure events are above grid lines if needed
-                          style={{
-                            top: `${displayTop}px`,
-                            height: `${displayHeight}px`,
-                            left: `calc(${leftPositionPercentage}% + 2px)`, // Add small offset for padding/border look
-                            width: `calc(${dayColumnWidthPercentage}% - 4px)`, // Reduce width slightly for padding/border look
-                          }}
-                          title={`${event.courseCode}: ${event.courseName}\n${timeString}`}
-                        >
-                          <p className="text-xs font-semibold truncate">{event.courseCode}</p>
-                          <p className="text-[10px] leading-tight truncate">{event.courseName}</p>
-                          {/* Optional: Display time inside event if height allows */}
-                           {displayHeight > 30 && <p className="text-[9px] leading-tight truncate mt-0.5">{timeString}</p>}
-                        </div>
-                      );
-                    })}
+                    return (
+                      <div
+                        key={event.id}
+                        className={`absolute rounded-md p-1.5 shadow-md overflow-hidden ${event.bgColorClass} ${event.textColorClass} ${event.borderColorClass} border z-10`}
+                        style={{
+                          top: `${displayTop}px`,
+                          height: `${displayHeight}px`,
+                          left: `calc(${leftPct}% + 2px)`,
+                          width: `calc(${colWidth}% - 4px)`,
+                        }}
+                        title={`${weekdaysFull[event.dayOfWeek]}, ${timeStr}\n${event.courseCode}: ${event.courseName}`}
+                      >
+                        <p className="text-xs font-semibold truncate">
+                          {event.courseCode}
+                        </p>
+                        <p className="text-[10px] leading-tight truncate">
+                          {event.courseName}
+                        </p>
+                        {displayHeight > 30 && (
+                          <p className="text-[9px] leading-tight truncate mt-0.5">
+                            {timeStr}
+                          </p>
+                        )}
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
             </div>
